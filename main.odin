@@ -3,7 +3,7 @@ package main
 import "core:fmt"
 import "core:os"
 
-Errors :: enum{OK, NotInMap, CouldNotInsert}
+Errors :: enum{OK, NotInMap, MapFull}
 
 capacity :: 32
 
@@ -38,7 +38,7 @@ map_insert :: proc(hashmap: ^Map, key: string, val: int) -> Errors {
 
     iterated_by := 0
     for hashmap.data[index].unavailable == true {
-        if iterated_by >= cap(hashmap.data) { return Errors.CouldNotInsert }
+        if iterated_by >= cap(hashmap.data) { return Errors.MapFull }
         index += 1
         iterated_by += 1
         if index >= cap(hashmap.data) { index = 0 }
@@ -51,12 +51,15 @@ map_insert :: proc(hashmap: ^Map, key: string, val: int) -> Errors {
 map_get :: proc(hashmap: ^Map, key: string) -> (int, Errors) {
     index := hash(key) % cap(hashmap.data) 
 
+    iterated_by := 0
     for hashmap.data[index].key != key {
         if hashmap.data[index].unavailable {
             return 0, Errors.NotInMap 
         }
-        if index >= cap(hashmap.data) { index = 0 }
+        if iterated_by >= cap(hashmap.data) { return 0, Errors.MapFull }
         index += 1
+        iterated_by += 1
+        if index >= cap(hashmap.data) { index = 0 }
     }
 
     return hashmap.data[index].val, Errors.OK
