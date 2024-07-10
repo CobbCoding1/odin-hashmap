@@ -27,3 +27,4 @@ if err != Errors.OK {
 }
 map_print(&hashmap) // prints the used elements in the map
 ```
+See main.odin for larger example
