@@ -7,8 +7,10 @@ Errors :: enum{OK, NotInMap, MapFull}
 
 capacity :: 32
 
+Data_Union :: union($T: typeid) {T, Errors}
+
 Data :: struct {
-    val: int,
+    val: Data_Union(T),
     key: string,
     unavailable: bool,
 }
@@ -31,7 +33,7 @@ map_init :: proc() -> Map {
     return hashmap
 }
 
-map_insert :: proc(hashmap: ^Map, key: string, val: int) -> Errors {
+map_insert :: proc(hashmap: ^Map, key: string, val: T) -> Errors {
     index := hash(key) % cap(hashmap.data) 
 
     data := Data{val, key, true}
@@ -48,21 +50,21 @@ map_insert :: proc(hashmap: ^Map, key: string, val: int) -> Errors {
     return Errors.OK
 }
 
-map_get :: proc(hashmap: ^Map, key: string) -> (int, Errors) {
+map_get :: proc(hashmap: ^Map, key: string) -> Data_Union(T) {
     index := hash(key) % cap(hashmap.data) 
 
     iterated_by := 0
     for hashmap.data[index].key != key {
         if hashmap.data[index].unavailable {
-            return 0, Errors.NotInMap 
+            return Errors.NotInMap 
         }
-        if iterated_by >= cap(hashmap.data) { return 0, Errors.MapFull }
+        if iterated_by >= cap(hashmap.data) { return Errors.MapFull }
         index += 1
         iterated_by += 1
         if index >= cap(hashmap.data) { index = 0 }
     }
 
-    return hashmap.data[index].val, Errors.OK
+    return hashmap.data[index].val
 }
 
 map_delete :: proc(hashmap: ^Map, key: string) -> Errors {
@@ -85,7 +87,7 @@ map_clear :: proc(hashmap: ^Map) {
 }
 
 data_print :: proc(data: ^Data) {
-    fmt.printf("val: %d, key: %s\n", data.val, data.key)
+    fmt.println("val:", data.val, "key:", data.key)
 }
 
 map_print :: proc(hashmap: ^Map) {
@@ -97,27 +99,18 @@ map_print :: proc(hashmap: ^Map) {
     }
 }
 
+T :: string 
+
 main :: proc() {
     hashmap := map_init()
-    err := map_insert(&hashmap, "test2", 5)
-    if err != Errors.OK {
-        fmt.eprintln("could not insert")
-        os.exit(1)
-    }
-    err = map_insert(&hashmap, "test", 10)
-    if err != Errors.OK {
-        fmt.eprintln("could not insert")
-        os.exit(1)
-    }
-    err = map_insert(&hashmap, "test3", 10)
+    err := map_insert(&hashmap, "test2", "test")
     if err != Errors.OK {
         fmt.eprintln("could not insert")
         os.exit(1)
     }
 
-    val: int = 0
-    val, err = map_get(&hashmap, "test3")
-    if err != Errors.OK {
+    val, ok := map_get(&hashmap, "test2").(T)
+    if !ok {
         fmt.eprintln("could not get element")
         os.exit(1)
     }
