@@ -80,6 +80,23 @@ map_delete :: proc(hashmap: ^Map, key: string) -> Errors {
     return Errors.OK
 }
 
+map_clear :: proc(hashmap: ^Map) {
+    clear(&hashmap.data)
+}
+
+data_print :: proc(data: ^Data) {
+    fmt.printf("val: %d, key: %s\n", data.val, data.key)
+}
+
+map_print :: proc(hashmap: ^Map) {
+    for &val, index in hashmap.data {
+        if(val.unavailable) {
+            fmt.printf("index: %d, ", index)
+            data_print(&val)
+        }
+    }
+}
+
 main :: proc() {
     hashmap := map_init()
     err := map_insert(&hashmap, "test2", 5)
@@ -105,14 +122,7 @@ main :: proc() {
         os.exit(1)
     }
 
-
-    for i in 0..<32 {
-        //fmt.println(i, hash(i) % cap(hashmap.data))
-    }
-
-    for val in hashmap.data {
-        //fmt.println(val)
-    }
+    map_print(&hashmap)
 }
 
 
