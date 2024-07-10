@@ -5,6 +5,8 @@ import "core:os"
 
 Errors :: enum{OK, NotInMap, MapFull}
 
+PRIME :: 7
+
 capacity :: 32
 
 Data_Union :: union($T: typeid) {T, Errors}
@@ -20,9 +22,9 @@ Map :: struct {
 }
 
 hash :: proc(n: string) -> int {
-    result: int = 0
+    result: int = PRIME 
     for ch in n {
-        result += (cast(int)ch * 10 + 2) / 3 
+        result = result * 31 + int(ch)
     }
     return result
 }
