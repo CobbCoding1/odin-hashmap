@@ -1,3 +1,0 @@
-/home/ic/Projects/odin/hashmap/main.odin(67:12) Error: Cannot assign value 'hashmap.data[index].val' of type 'Data_Union($T)' to 'int' in return statement 
-	return hashmap.data[index].val, Errors.OK 
-	       ^~~~~~~~~~~~~~~~~~~~~~^ 
