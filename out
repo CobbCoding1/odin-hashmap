@@ -1,0 +1,6 @@
+/home/ic/Projects/odin/hashmap/lib/hashmap.odin(99:25) Error: 'data' of type '^Data' has no field 'val' 
+	fmt.println("val:", data.val, "key:", data.key) 
+	                    ^~~^ 
+/home/ic/Projects/odin/hashmap/lib/hashmap.odin(99:43) Error: 'data' of type '^Data' has no field 'key' 
+	fmt.println("val:", data.val, "key:", data.key) 
+	                                      ^~~^ 

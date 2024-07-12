@@ -17,14 +17,14 @@ Data_Union :: union($T: typeid) {T, Errors}
 
 @(private)
 Data :: struct($T: typeid) {
-    val: Data_Union(T),
+    val: T,
     key: string,
     unavailable: bool,
 }
 
 @(private)
-Map :: struct {
-    data: [dynamic]Data,
+Map :: struct($T: typeid) {
+    data: [dynamic]Data(T),
 }
 
 @(private)
@@ -36,16 +36,16 @@ hash :: proc(n: string) -> int {
     return result
 }
 
-map_init :: proc($T: typeid) -> Map {
+map_init :: proc($T: typeid) -> Map(T) {
     hashmap: Map(T)
-    hashmap.data = make([dynamic]Data, capacity)
+    hashmap.data = make([dynamic]Data(T), capacity)
     return hashmap
 }
 
-map_insert :: proc(hashmap: ^Map, key: string, val: int) -> Errors {
+map_insert :: proc($T: typeid, hashmap: ^Map(T), key: string, val: T) -> Errors {
     index := hash(key) % cap(hashmap.data) 
 
-    data := Data{val, key, true}
+    data := Data(T){val, key, true}
 
     iterated_by := 0
     for hashmap.data[index].unavailable == true {
@@ -59,7 +59,7 @@ map_insert :: proc(hashmap: ^Map, key: string, val: int) -> Errors {
     return Errors.OK
 }
 
-map_get :: proc(hashmap: ^Map, key: string) -> Data_Union(int) {
+map_get :: proc($T: typeid, hashmap: ^Map(T), key: string) -> Data_Union(T) {
     index := hash(key) % cap(hashmap.data) 
 
     iterated_by := 0
@@ -95,15 +95,15 @@ map_clear :: proc(hashmap: ^Map) {
     clear(&hashmap.data)
 }
 
-data_print :: proc(data: ^Data) {
+data_print :: proc($T: typeid, data: ^Data(T)) {
     fmt.println("val:", data.val, "key:", data.key)
 }
 
-map_print :: proc(hashmap: ^Map) {
+map_print :: proc($T: typeid, hashmap: ^Map(T)) {
     for &val, index in hashmap.data {
         if(val.unavailable) {
             fmt.printf("index: %d, ", index)
-            data_print(&val)
+            data_print(T, &val)
         }
     }
 }
