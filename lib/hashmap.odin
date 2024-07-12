@@ -42,7 +42,7 @@ map_init :: proc($T: typeid) -> Map(T) {
     return hashmap
 }
 
-map_insert :: proc($T: typeid, hashmap: ^Map(T), key: string, val: T) -> Errors {
+map_insert :: proc(hashmap: ^Map($T), key: string, val: T) -> Errors {
     index := hash(key) % cap(hashmap.data) 
 
     data := Data(T){val, key, true}
@@ -59,7 +59,7 @@ map_insert :: proc($T: typeid, hashmap: ^Map(T), key: string, val: T) -> Errors 
     return Errors.OK
 }
 
-map_get :: proc($T: typeid, hashmap: ^Map(T), key: string) -> Data_Union(T) {
+map_get :: proc(hashmap: ^Map($T), key: string) -> Data_Union(T) {
     index := hash(key) % cap(hashmap.data) 
 
     iterated_by := 0
@@ -76,7 +76,7 @@ map_get :: proc($T: typeid, hashmap: ^Map(T), key: string) -> Data_Union(T) {
     return hashmap.data[index].val
 }
 
-map_delete :: proc(hashmap: ^Map, key: string) -> Errors {
+map_delete :: proc(hashmap: ^Map($T), key: string) -> Errors {
     index := hash(key) % cap(hashmap.data) 
 
     for hashmap.data[index].key != key {
@@ -95,15 +95,15 @@ map_clear :: proc(hashmap: ^Map) {
     clear(&hashmap.data)
 }
 
-data_print :: proc($T: typeid, data: ^Data(T)) {
+data_print :: proc(data: ^Data($T)) {
     fmt.println("val:", data.val, "key:", data.key)
 }
 
-map_print :: proc($T: typeid, hashmap: ^Map(T)) {
+map_print :: proc(hashmap: ^Map($T)) {
     for &val, index in hashmap.data {
         if(val.unavailable) {
             fmt.printf("index: %d, ", index)
-            data_print(T, &val)
+            data_print(&val)
         }
     }
 }
