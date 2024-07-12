@@ -6,6 +6,8 @@ import "core:fmt"
 main :: proc() {
     hmap := hashmap.map_init(string)
     ihmap := hashmap.map_init(int)
+    defer delete(ihmap.data)
+    defer delete(hmap.data)
     err := hashmap.map_insert(&hmap, "test2", "ligma")
     if err != hashmap.Errors.OK {
         hashmap.print_err("could not insert")
