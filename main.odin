@@ -3,10 +3,8 @@ package main
 import hashmap "lib/" 
 import "core:fmt"
 
-T :: string 
-
 main :: proc() {
-    hmap := hashmap.map_init(T)
+    hmap := hashmap.map_init(string)
     ihmap := hashmap.map_init(int)
     err := hashmap.map_insert(&hmap, "test2", "ligma")
     if err != hashmap.Errors.OK {
@@ -18,7 +16,7 @@ main :: proc() {
         hashmap.print_err("could not insert")
     }
 
-    val, ok := hashmap.map_get(&hmap, "test2").(T)
+    val, ok := hashmap.map_get(&hmap, "test2").(string)
     if !ok {
         hashmap.print_err("could not get element")
     }
