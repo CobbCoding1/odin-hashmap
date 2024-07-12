@@ -3,7 +3,7 @@ package hashmap
 import "core:fmt"
 import "core:os"
 
-T :: int
+//T :: int
 
 Errors :: enum{OK, NotInMap, MapFull}
 
@@ -16,7 +16,7 @@ capacity :: 32
 Data_Union :: union($T: typeid) {T, Errors}
 
 @(private)
-Data :: struct {
+Data :: struct($T: typeid) {
     val: Data_Union(T),
     key: string,
     unavailable: bool,
@@ -36,13 +36,13 @@ hash :: proc(n: string) -> int {
     return result
 }
 
-map_init :: proc() -> Map {
-    hashmap := Map{}
+map_init :: proc($T: typeid) -> Map {
+    hashmap: Map(T)
     hashmap.data = make([dynamic]Data, capacity)
     return hashmap
 }
 
-map_insert :: proc(hashmap: ^Map, key: string, val: T) -> Errors {
+map_insert :: proc(hashmap: ^Map, key: string, val: int) -> Errors {
     index := hash(key) % cap(hashmap.data) 
 
     data := Data{val, key, true}
@@ -59,7 +59,7 @@ map_insert :: proc(hashmap: ^Map, key: string, val: T) -> Errors {
     return Errors.OK
 }
 
-map_get :: proc(hashmap: ^Map, key: string) -> Data_Union(T) {
+map_get :: proc(hashmap: ^Map, key: string) -> Data_Union(int) {
     index := hash(key) % cap(hashmap.data) 
 
     iterated_by := 0
